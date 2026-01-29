@@ -1,2 +1,4 @@
-def test_basic_pass():
-    assert 1 == 1
+import random
+
+def test_flaky():
+    assert random.choice([True, False])
