@@ -38,7 +38,9 @@ jobs:
           AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
           AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
         run: |
-          python agent.py test_output.txt
+          ls -la
+          pwd
+          python ./agent.py test_output.txt
           echo "decision=$(cat decision.txt)" >> $GITHUB_OUTPUT
 
       - name: Retry failed tests
