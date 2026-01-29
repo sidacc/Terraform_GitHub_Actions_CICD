@@ -47,9 +47,14 @@ Logs:
 
     decision = json.loads(response.choices[0].message.content)["decision"]
 
+    #  Write decision for GitHub Actions
     with open("decision.txt", "w") as f:
         f.write(decision)
 
+    #  PRINT AI REASONING TO LOGS (IMPORTANT FOR LEARNING)
+    print("========== AI ANALYSIS INPUT (TEST LOGS) ==========")
+    print(logs)
+    print("===================================================")
     print(f"AI Decision: {decision}")
 
 if __name__ == "__main__":
