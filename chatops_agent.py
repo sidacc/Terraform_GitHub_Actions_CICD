@@ -1,46 +1,35 @@
 import sys
 import os
-import json
 from openai import AzureOpenAI
 
 def main():
-    # Read comment from file
-    comment = open(sys.argv[1]).read()
+    comment = sys.argv[1]
 
-    print("========== COMMENT RECEIVED ==========")
-    print(comment)
-    print("======================================")
-
-    # Initialize Azure OpenAI client
     client = AzureOpenAI(
         api_key=os.getenv("AZURE_OPENAI_API_KEY"),
         api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
     )
 
-    # Prompt to classify intent
     prompt = f"""
-You are an AI DevOps ChatOps agent.
+You are an AI DevOps ChatOps controller.
 
-Analyze the GitHub comment below and decide the intent.
-
-Allowed actions:
-- deploy
-- rollback
-- analyze
-- ignore
-
-Rules:
-- Deploy-related words → deploy
-- Rollback / revert words → rollback
-- Analyze / investigate → analyze
-- Anything else → ignore
-
-Respond ONLY in valid JSON:
-{{ "action": "<value>" }}
-
-Comment:
+User comment:
 {comment}
+
+Allowed commands:
+- /deploy
+- /rollback
+- /status
+
+If comment matches allowed command → respond with action.
+If not → respond with ignore.
+
+Respond ONLY with one word:
+deploy
+rollback
+status
+ignore
 """
 
     response = client.chat.completions.create(
@@ -49,14 +38,9 @@ Comment:
         temperature=0,
     )
 
-    result = json.loads(response.choices[0].message.content)
-    action = result["action"]
+    decision = response.choices[0].message.content.strip()
 
-    # Write result for GitHub Actions
-    with open("action.txt", "w") as f:
-        f.write(action)
-
-    print(f"AI ChatOps Decision: {action}")
+    print("AI Decision:", decision)
 
 if __name__ == "__main__":
     main()
